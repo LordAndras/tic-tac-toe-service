@@ -1,6 +1,5 @@
 package com.example.game.logic
 
-import com.example.game.logic.GameLogic
 import com.example.game.model.GameStateResponse
 import com.example.game.state.GameState
 import io.kotest.matchers.shouldBe
@@ -26,7 +25,7 @@ internal class GameLogicTest {
         gameState.setGameStatus(NO_WINNER_END_STATE)
         val gameLogic = GameLogic(gameState)
 
-        val expected = GameStateResponse(gameState = NO_WINNER_END_STATE, winner = 0, isGameOver = true)
+        val expected = GameStateResponse(gameState = NO_WINNER_END_STATE, winner = 0, gameOver = true)
 
         val result = gameLogic.getNextState()
 
@@ -38,7 +37,7 @@ internal class GameLogicTest {
         gameState.setGameStatus(WINNER_WITH_NOT_FULL_BOARD)
         val gameLogic = GameLogic(gameState)
 
-        val expected = GameStateResponse(gameState = WINNER_WITH_NOT_FULL_BOARD, winner = 1, isGameOver = true)
+        val expected = GameStateResponse(gameState = WINNER_WITH_NOT_FULL_BOARD, winner = 1, gameOver = true)
 
         val result = gameLogic.getNextState()
 
@@ -50,7 +49,7 @@ internal class GameLogicTest {
         gameState.setGameStatus(IN_PROGRESS_STATE)
         val gameLogic = GameLogic(gameState)
 
-        val expected = GameStateResponse(gameState = IN_PROGRESS_STATE, winner = 0, isGameOver = false)
+        val expected = GameStateResponse(gameState = IN_PROGRESS_STATE, winner = 0, gameOver = false)
 
         val result = gameLogic.getNextState()
 

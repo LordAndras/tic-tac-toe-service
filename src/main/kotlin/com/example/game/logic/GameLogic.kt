@@ -12,7 +12,7 @@ class GameLogic(private val gameState: GameState) {
     fun getNextState(): GameStateResponse {
         winner = checkWinner()
         isGameOver = gameState.isGameEnd() || winner != 0
-        return GameStateResponse(gameState = gameState.getGameStatusString(), winner = winner, isGameOver = isGameOver)
+        return GameStateResponse(gameState = gameState.getGameStatusString(), winner = winner, gameOver = isGameOver)
     }
 
     private fun checkWinner(): Int {

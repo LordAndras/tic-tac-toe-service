@@ -31,7 +31,7 @@ class NewGameIntegrationTest {
 
     @Test
     fun `newGame should return game state with only zeros`() {
-        val expectedResult = """{"gameState":"0,0,0,0,0,0,0,0,0","winner":0,"isGameOver":false}"""
+        val expectedResult = """{"gameState":"0,0,0,0,0,0,0,0,0","winner":0,"gameOver":false}"""
 
         mockMvc!!.perform(
                 MockMvcRequestBuilders

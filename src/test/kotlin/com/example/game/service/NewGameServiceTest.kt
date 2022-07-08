@@ -1,7 +1,6 @@
 package com.example.game.service
 
 import com.example.game.model.GameStateResponse
-import com.example.game.service.NewGameService
 import com.example.game.state.GameState
 import io.kotest.matchers.shouldBe
 import io.mockk.mockk
@@ -26,7 +25,7 @@ internal class NewGameServiceTest {
         gameState.setGameStatus("1,2,3,4,5,6,7,8,9")
         val newGameService = NewGameService(gameState)
 
-        val expectedResult = GameStateResponse(gameState = "0,0,0,0,0,0,0,0,0", winner = 0, isGameOver = false)
+        val expectedResult = GameStateResponse(gameState = "0,0,0,0,0,0,0,0,0", winner = 0, gameOver = false)
 
         val result = newGameService.newGame()
 

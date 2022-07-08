@@ -1,10 +1,8 @@
 package com.example.game.controller
 
-import com.example.game.controller.GameController
 import com.example.game.service.NewGameService
 import com.example.game.service.ProcessNextStepService
 import com.example.game.service.ValidateStepService
-import io.kotest.matchers.ints.exactly
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach

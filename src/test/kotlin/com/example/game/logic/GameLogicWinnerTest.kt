@@ -1,6 +1,5 @@
 package com.example.game.logic
 
-import com.example.game.logic.GameLogic
 import com.example.game.model.GameStateResponse
 import com.example.game.state.GameState
 import io.kotest.matchers.shouldBe
@@ -21,7 +20,7 @@ internal class GameLogicWinnerTest {
         gameState.setGameStatus(firstRowWins)
         val gameLogic = GameLogic(gameState)
 
-        val expected = GameStateResponse(gameState = firstRowWins, winner = 1, isGameOver = true)
+        val expected = GameStateResponse(gameState = firstRowWins, winner = 1, gameOver = true)
 
         val result = gameLogic.getNextState()
 
@@ -34,7 +33,7 @@ internal class GameLogicWinnerTest {
         gameState.setGameStatus(secondRowWins)
         val gameLogic = GameLogic(gameState)
 
-        val expected = GameStateResponse(gameState = secondRowWins, winner = -1, isGameOver = true)
+        val expected = GameStateResponse(gameState = secondRowWins, winner = -1, gameOver = true)
 
         val result = gameLogic.getNextState()
 
@@ -47,7 +46,7 @@ internal class GameLogicWinnerTest {
         gameState.setGameStatus(thirdRowWins)
         val gameLogic = GameLogic(gameState)
 
-        val expected = GameStateResponse(gameState = thirdRowWins, winner = 1, isGameOver = true)
+        val expected = GameStateResponse(gameState = thirdRowWins, winner = 1, gameOver = true)
 
         val result = gameLogic.getNextState()
 
@@ -60,7 +59,7 @@ internal class GameLogicWinnerTest {
         gameState.setGameStatus(firstColumnWins)
         val gameLogic = GameLogic(gameState)
 
-        val expected = GameStateResponse(gameState = firstColumnWins, winner = 1, isGameOver = true)
+        val expected = GameStateResponse(gameState = firstColumnWins, winner = 1, gameOver = true)
 
         val result = gameLogic.getNextState()
 
@@ -73,7 +72,7 @@ internal class GameLogicWinnerTest {
         gameState.setGameStatus(secondColumnWins)
         val gameLogic = GameLogic(gameState)
 
-        val expected = GameStateResponse(gameState = secondColumnWins, winner = -1, isGameOver = true)
+        val expected = GameStateResponse(gameState = secondColumnWins, winner = -1, gameOver = true)
 
         val result = gameLogic.getNextState()
 
@@ -86,7 +85,7 @@ internal class GameLogicWinnerTest {
         gameState.setGameStatus(thirdColumnWins)
         val gameLogic = GameLogic(gameState)
 
-        val expected = GameStateResponse(gameState = thirdColumnWins, winner = 1, isGameOver = true)
+        val expected = GameStateResponse(gameState = thirdColumnWins, winner = 1, gameOver = true)
 
         val result = gameLogic.getNextState()
 
@@ -99,7 +98,7 @@ internal class GameLogicWinnerTest {
         gameState.setGameStatus(leftDownWins)
         val gameLogic = GameLogic(gameState)
 
-        val expected = GameStateResponse(gameState = leftDownWins, winner = 1, isGameOver = true)
+        val expected = GameStateResponse(gameState = leftDownWins, winner = 1, gameOver = true)
 
         val result = gameLogic.getNextState()
 
@@ -112,7 +111,7 @@ internal class GameLogicWinnerTest {
         gameState.setGameStatus(rightDownWins)
         val gameLogic = GameLogic(gameState)
 
-        val expected = GameStateResponse(gameState = rightDownWins, winner = -1, isGameOver = true)
+        val expected = GameStateResponse(gameState = rightDownWins, winner = -1, gameOver = true)
 
         val result = gameLogic.getNextState()
 

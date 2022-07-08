@@ -32,7 +32,7 @@ class ProcessNextStepIntegrationTest {
     @Test
     fun `nextStep should return gameStateResponse with correct data`() {
         val testStep = "1,0,0,0,0,0,0,0,0"
-        val expectedResult = """{"gameState":"1,0,0,0,0,0,0,0,0","winner":0,"isGameOver":false}"""
+        val expectedResult = """{"gameState":"1,0,0,0,0,0,0,0,0","winner":0,"gameOver":false}"""
 
         mockMvc!!.perform(
             MockMvcRequestBuilders
@@ -46,7 +46,7 @@ class ProcessNextStepIntegrationTest {
     @Test
     fun `nextStep should return winner if game is won`() {
         val testStep = "-1,-1,-1,0,0,0,0,0,0"
-        val expectedResult = """{"gameState":"-1,-1,-1,0,0,0,0,0,0","winner":-1,"isGameOver":true}"""
+        val expectedResult = """{"gameState":"-1,-1,-1,0,0,0,0,0,0","winner":-1,"gameOver":true}"""
         mockMvc!!.perform(
             MockMvcRequestBuilders
                 .post(URI("/nextStep"))
@@ -59,7 +59,7 @@ class ProcessNextStepIntegrationTest {
     @Test
     fun `nextStep should return gameEnd if game is over`() {
         val testStep = "-1,1,-1,-1,1,1,1,-1,1"
-        val expectedResult = """{"gameState":"-1,1,-1,-1,1,1,1,-1,1","winner":0,"isGameOver":true}"""
+        val expectedResult = """{"gameState":"-1,1,-1,-1,1,1,1,-1,1","winner":0,"gameOver":true}"""
 
         mockMvc!!.perform(
             MockMvcRequestBuilders
