@@ -1,6 +1,6 @@
 package com.example.game.websocket
 
-import com.example.game.message.MessageHandlerService
+import com.example.game.message.MessageHandlerFacade
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
@@ -12,13 +12,13 @@ import org.springframework.web.socket.WebSocketSession
 internal class WebsocketHandlerTest {
 
     private lateinit var websocketHandler: WebsocketHandler
-    private lateinit var mockMessageHandlerService: MessageHandlerService
+    private lateinit var messageHandlerFacade: MessageHandlerFacade
     private lateinit var mockSession: WebSocketSession
 
     @BeforeEach
     fun setUp() {
-        mockMessageHandlerService = mockk(relaxed = true)
-        websocketHandler = WebsocketHandler(mockMessageHandlerService)
+        messageHandlerFacade = mockk(relaxed = true)
+        websocketHandler = WebsocketHandler(messageHandlerFacade)
         mockSession = mockk(relaxed = true)
     }
 
@@ -28,7 +28,7 @@ internal class WebsocketHandlerTest {
 
         websocketHandler.handleMessage(mockSession, testTextMessage)
 
-        verify { mockMessageHandlerService.prepareResponseMessage(testTextMessage.payload) }
+        verify { messageHandlerFacade.handleMessage(testTextMessage.payload) }
     }
 
 }

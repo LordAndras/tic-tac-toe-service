@@ -1,6 +1,6 @@
 package com.example.game.websocket
 
-import com.example.game.message.MessageHandlerService
+import com.example.game.message.MessageHandlerFacade
 import com.example.game.model.Player
 import org.springframework.stereotype.Component
 import org.springframework.web.socket.CloseStatus
@@ -10,7 +10,9 @@ import org.springframework.web.socket.WebSocketSession
 import org.springframework.web.socket.handler.TextWebSocketHandler
 
 @Component
-class WebsocketHandler(private val messageHandlerService: MessageHandlerService) : TextWebSocketHandler() {
+class WebsocketHandler(
+    private val messageHandlerFacade: MessageHandlerFacade
+) : TextWebSocketHandler() {
     private val sessions = mutableMapOf<WebSocketSession, Player>()
 
     override fun afterConnectionEstablished(session: WebSocketSession) {
@@ -29,10 +31,10 @@ class WebsocketHandler(private val messageHandlerService: MessageHandlerService)
     }
 
     override fun handleTextMessage(session: WebSocketSession, message: TextMessage) {
-        val responseMessage = messageHandlerService.prepareResponseMessage(message.payload)
+        val responseMessage = messageHandlerFacade.handleMessage(message.payload)
 
         sessions.keys.forEach {
-            it.sendMessage(TextMessage(responseMessage))
+            it.sendMessage(responseMessage)
         }
     }
 }

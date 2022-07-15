@@ -1,6 +1,7 @@
 package com.example.game.message
 
 import com.example.game.model.GameStateResponse
+import com.example.game.model.SocketMessagePayload
 import com.example.game.service.ProcessNextStepService
 import com.example.game.service.ValidateStepService
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -58,31 +59,32 @@ internal class MessageHandlerServiceTest {
     }
 
     @Test
-    fun `prepareResponseMessage should return correct gameStateResponse`() {
+    fun `prepareResponseMessage should return correct gameStateResponse as payload`() {
         val testInput = "0,1,1,0,-1,0,-1,1,1"
-        val expectation = GameStateResponse("0,0,0,0,0,0,0,0,0", 1, true)
+        val testGameStateResponse = GameStateResponse("0,0,0,0,0,0,0,0,0", 1, true)
+        val expectation = SocketMessagePayload(gameStateResponse = testGameStateResponse)
 
         every { mockValidateStepService.validate(any()) } returns true
-        every { mockProcessNextStepService.processNextStep(testInput) } returns expectation
+        every { mockProcessNextStepService.processNextStep(testInput) } returns testGameStateResponse
         every { mockObjectMapper.writeValueAsString(expectation) } returns "success"
 
        val result = messageHandlerService.prepareResponseMessage(testInput)
 
-        result shouldBe "success"
+        result.payload shouldBe "success"
     }
 
     @Test
-    fun `prepareResponseMessage should return empty string if input is invalid`() {
+    fun `prepareResponseMessage should return error message as payload string if input is invalid`() {
         val testInput = "0,1,1,0,-1,0,-1,1,1"
-        val expectation = GameStateResponse("0,0,0,0,0,0,0,0,0", 1, true)
+        val testGameStateResponse = GameStateResponse("0,0,0,0,0,0,0,0,0", 1, true)
 
         every { mockValidateStepService.validate(any()) } returns false
-        every { mockProcessNextStepService.processNextStep(testInput) } returns expectation
-        every { mockObjectMapper.writeValueAsString(expectation) } returns "success"
+        every { mockProcessNextStepService.processNextStep(testInput) } returns testGameStateResponse
+        every { mockObjectMapper.writeValueAsString(any()) } returns "Invalid input!"
 
        val result = messageHandlerService.prepareResponseMessage(testInput)
 
-        result shouldBe ""
+        result.payload shouldBe "Invalid input!"
     }
 
 }
