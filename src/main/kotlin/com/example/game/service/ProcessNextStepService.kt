@@ -10,7 +10,7 @@ class ProcessNextStepService(private val gameState: GameState, private val gameL
 
     fun processNextStep(nextStep: String): GameStateResponse {
         gameState.setGameStatus(nextStep)
-        return gameLogic.getNextState()
+        return gameLogic.getGameStateResponse()
     }
 
 

@@ -1,7 +1,6 @@
 package com.example.game.service
 
 import com.example.game.logic.GameLogic
-import com.example.game.service.ProcessNextStepService
 import com.example.game.state.GameState
 import io.mockk.mockk
 import io.mockk.verify
@@ -22,7 +21,7 @@ internal class ProcessNextStepServiceTest {
     }
 
     @Test
-    fun `processNextStep should call getResult`() {
+    fun `processNextStep should call getGameStateResponse`() {
         val mockGameState: GameState = mockk(relaxed = true)
         val mockGameLogic: GameLogic = mockk(relaxed = true)
         val processNextStepService = ProcessNextStepService(mockGameState, mockGameLogic)
@@ -30,6 +29,6 @@ internal class ProcessNextStepServiceTest {
 
         processNextStepService.processNextStep(testString)
 
-        verify { mockGameLogic.getNextState() }
+        verify { mockGameLogic.getGameStateResponse() }
     }
 }

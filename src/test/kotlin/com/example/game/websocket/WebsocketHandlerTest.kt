@@ -4,7 +4,6 @@ import com.example.game.message.MessageHandlerService
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
-
 import org.junit.jupiter.api.Test
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
@@ -24,7 +23,7 @@ internal class WebsocketHandlerTest {
     }
 
     @Test
-    fun `handleTextMessage should call messageHandlerService with payload`() {
+    fun `handleTextMessage should call prepareResponseMessage messageHandlerService with payload`() {
         val testTextMessage = TextMessage("testPayload")
 
         websocketHandler.handleMessage(mockSession, testTextMessage)

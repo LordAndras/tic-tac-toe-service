@@ -9,7 +9,7 @@ class GameLogic(private val gameState: GameState) {
     private var winner: Int = 0
     private var isGameOver: Boolean = false
 
-    fun getNextState(): GameStateResponse {
+    fun getGameStateResponse(): GameStateResponse {
         winner = checkWinner()
         isGameOver = gameState.isGameEnd() || winner != 0
         return GameStateResponse(gameState = gameState.getGameStatusString(), winner = winner, gameOver = isGameOver)

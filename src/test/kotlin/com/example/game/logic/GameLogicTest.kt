@@ -27,7 +27,7 @@ internal class GameLogicTest {
 
         val expected = GameStateResponse(gameState = NO_WINNER_END_STATE, winner = 0, gameOver = true)
 
-        val result = gameLogic.getNextState()
+        val result = gameLogic.getGameStateResponse()
 
         result shouldBe expected
     }
@@ -39,7 +39,7 @@ internal class GameLogicTest {
 
         val expected = GameStateResponse(gameState = WINNER_WITH_NOT_FULL_BOARD, winner = 1, gameOver = true)
 
-        val result = gameLogic.getNextState()
+        val result = gameLogic.getGameStateResponse()
 
         result shouldBe expected
     }
@@ -51,7 +51,7 @@ internal class GameLogicTest {
 
         val expected = GameStateResponse(gameState = IN_PROGRESS_STATE, winner = 0, gameOver = false)
 
-        val result = gameLogic.getNextState()
+        val result = gameLogic.getGameStateResponse()
 
         result shouldBe expected
     }
