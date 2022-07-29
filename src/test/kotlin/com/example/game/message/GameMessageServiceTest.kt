@@ -12,9 +12,9 @@ import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-internal class MessageHandlerServiceTest {
+internal class GameMessageServiceTest {
 
-    private lateinit var messageHandlerService: MessageHandlerService
+    private lateinit var gameMessageService: GameMessageService
     private lateinit var mockObjectMapper: ObjectMapper
     private lateinit var mockValidateStepService: ValidateStepService
     private lateinit var mockProcessNextStepService: ProcessNextStepService
@@ -24,14 +24,14 @@ internal class MessageHandlerServiceTest {
         mockObjectMapper = mockk(relaxed = true)
         mockValidateStepService = mockk(relaxed = true)
         mockProcessNextStepService = mockk(relaxed = true)
-        messageHandlerService = MessageHandlerService(mockObjectMapper, mockValidateStepService, mockProcessNextStepService)
+        gameMessageService = GameMessageService(mockObjectMapper, mockValidateStepService, mockProcessNextStepService)
     }
 
     @Test
     fun `prepareResponseMessage should validate incoming payload`() {
         val testInput = "input"
 
-        messageHandlerService.prepareResponseMessage(testInput)
+        gameMessageService.prepareResponseMessage(testInput)
 
         verify { mockValidateStepService.validate(testInput) }
     }
@@ -42,7 +42,7 @@ internal class MessageHandlerServiceTest {
 
         every { mockValidateStepService.validate(any()) } returns true
 
-        messageHandlerService.prepareResponseMessage(testInput)
+        gameMessageService.prepareResponseMessage(testInput)
 
         verify { mockProcessNextStepService.processNextStep(testInput) }
     }
@@ -53,7 +53,7 @@ internal class MessageHandlerServiceTest {
 
         every { mockValidateStepService.validate(any()) } returns false
 
-        messageHandlerService.prepareResponseMessage(testInput)
+        gameMessageService.prepareResponseMessage(testInput)
 
         verify(exactly = 0) { mockProcessNextStepService.processNextStep(testInput) }
     }
@@ -64,11 +64,11 @@ internal class MessageHandlerServiceTest {
         val testGameStateResponse = GameStateResponse("0,0,0,0,0,0,0,0,0", 1, true)
         val expectation = SocketMessagePayload(gameStateResponse = testGameStateResponse)
 
-        every { mockValidateStepService.validate(any()) } returns true
+        every { mockValidateStepService.validate(testInput) } returns true
         every { mockProcessNextStepService.processNextStep(testInput) } returns testGameStateResponse
         every { mockObjectMapper.writeValueAsString(expectation) } returns "success"
 
-       val result = messageHandlerService.prepareResponseMessage(testInput)
+       val result = gameMessageService.prepareResponseMessage(testInput)
 
         result.payload shouldBe "success"
     }
@@ -78,11 +78,11 @@ internal class MessageHandlerServiceTest {
         val testInput = "0,1,1,0,-1,0,-1,1,1"
         val testGameStateResponse = GameStateResponse("0,0,0,0,0,0,0,0,0", 1, true)
 
-        every { mockValidateStepService.validate(any()) } returns false
+        every { mockValidateStepService.validate(testInput) } returns false
         every { mockProcessNextStepService.processNextStep(testInput) } returns testGameStateResponse
         every { mockObjectMapper.writeValueAsString(any()) } returns "Invalid input!"
 
-       val result = messageHandlerService.prepareResponseMessage(testInput)
+       val result = gameMessageService.prepareResponseMessage(testInput)
 
         result.payload shouldBe "Invalid input!"
     }

@@ -1,6 +1,5 @@
 package com.example.game.service
 
-import com.example.game.service.ValidateStepService
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

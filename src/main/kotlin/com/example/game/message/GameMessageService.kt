@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.socket.TextMessage
 
 @Service
-class MessageHandlerService(
+class GameMessageService(
     private val objectMapper: ObjectMapper,
     private val validateStepService: ValidateStepService,
     private val processNextStepService: ProcessNextStepService
