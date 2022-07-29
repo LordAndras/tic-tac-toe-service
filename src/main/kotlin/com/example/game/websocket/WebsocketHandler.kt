@@ -18,6 +18,7 @@ class WebsocketHandler(
     override fun afterConnectionEstablished(session: WebSocketSession) {
         val newPlayer = Player(null, session.id)
         sessions[session] = newPlayer
+        session.sendMessage(TextMessage("""{"system":"greeting"}"""))
         super.afterConnectionEstablished(session)
     }
 

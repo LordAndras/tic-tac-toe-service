@@ -21,17 +21,6 @@ internal class SystemMessageServiceTest {
     }
 
     @Test
-    fun `handleSystemMessage should return greeting payload`() {
-        val testMessage = "greeting"
-
-        val result = systemMessageService.handleSystemMessage(testMessage)
-
-        val resultPayload = objectMapper.readValue(result.payload, socketMessageTypeRef)
-
-        resultPayload.system shouldBe "greeting"
-    }
-
-    @Test
     fun `handleSystemMessage should return newGame payload`() {
         val testMessage = "name"
 
