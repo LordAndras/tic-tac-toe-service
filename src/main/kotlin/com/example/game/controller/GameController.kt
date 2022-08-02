@@ -21,6 +21,11 @@ class GameController(
         return ResponseEntity.ok(newGameService.newGame())
     }
 
+    @GetMapping("/")
+    fun home(): ResponseEntity<String> {
+        return ResponseEntity.ok("Hello")
+    }
+
     @PostMapping("nextStep")
     fun nextStep(
         @RequestBody nextStep: String
