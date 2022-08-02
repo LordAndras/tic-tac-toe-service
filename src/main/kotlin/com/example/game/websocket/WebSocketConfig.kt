@@ -10,6 +10,7 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @EnableWebSocket
 open class WebSocketConfig(private val messageHandlerFacade: MessageHandlerFacade) : WebSocketConfigurer {
     override fun registerWebSocketHandlers(registry: WebSocketHandlerRegistry) {
-        registry.addHandler(WebsocketHandler(messageHandlerFacade), "/player").setAllowedOrigins("http://localhost:8080")
+        registry.addHandler(WebsocketHandler(messageHandlerFacade), "/player")
+            .setAllowedOrigins("http://localhost:8080")
     }
 }
