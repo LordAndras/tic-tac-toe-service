@@ -19,9 +19,7 @@ class SystemMessageService(private val objectMapper: ObjectMapper) {
             when (systemMessage.key) {
                 "name" -> {
                     val payload = createSuccessPayload()
-                    println(payload)
                     val json = jacksonObjectMapper().writeValueAsString(payload)
-                    println(json)
                     TextMessage(json)
                 }
 
