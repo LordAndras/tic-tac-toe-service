@@ -1,5 +1,8 @@
 package com.example.game.message
 
+import com.example.game.model.GameStateResponse
+import com.example.game.model.SocketMessagePayload
+import com.example.game.model.SystemMessage
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.mockk.mockk
@@ -7,7 +10,6 @@ import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 
 import org.junit.jupiter.api.Test
-import org.springframework.web.socket.TextMessage
 
 internal class MessageHandlerFacadeTest {
     private lateinit var messageHandlerFacade: MessageHandlerFacade
@@ -25,13 +27,24 @@ internal class MessageHandlerFacadeTest {
     }
 
     @Test
-    fun `handleMessage should call handleSystem message if payload's system property is not empty`() {
-        val testPayload = """{"system":"greeting","gameStateResponse": null,"error":""}"""
+    fun `handleMessage should call handleSystem message if payload is system message`() {
+        val testSystemMessage = SystemMessage("name", "Bob")
 
-        val testMessage = TextMessage(testPayload)
+        val testPayload = SocketMessagePayload(true, testSystemMessage)
 
-        messageHandlerFacade.handleMessage(testMessage.payload)
+        messageHandlerFacade.handleMessage(objectMapper.writeValueAsString(testPayload))
 
-        verify { mockSystemMessageService.handleSystemMessage("greeting") }
+        verify { mockSystemMessageService.handleSystemMessage(testSystemMessage) }
+    }
+
+    @Test
+    fun `handleMessage should not call handleSystem message if payload is not system message`() {
+        val testSystemMessage = SystemMessage("name", "Bob")
+
+        val testPayload = SocketMessagePayload(false, testSystemMessage, gameStateResponse = GameStateResponse())
+
+        messageHandlerFacade.handleMessage(objectMapper.writeValueAsString(testPayload))
+
+        verify(exactly = 0) { mockSystemMessageService.handleSystemMessage(testSystemMessage) }
     }
 }

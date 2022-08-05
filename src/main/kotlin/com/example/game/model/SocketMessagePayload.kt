@@ -1,8 +1,7 @@
 package com.example.game.model
 
 data class SocketMessagePayload(
-    val system: String = "",
-    val name: String = "",
-    val gameStateResponse: GameStateResponse? = null,
-    val error: String = ""
+    val isSysMessage: Boolean = false,
+    val systemMessage: SystemMessage? = null,
+    val gameStateResponse: GameStateResponse? = null
 )

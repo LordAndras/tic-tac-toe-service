@@ -17,10 +17,10 @@ class MessageHandlerFacade(
     fun handleMessage(payload: String): TextMessage {
         val socketMessagePayload = objectMapper.readValue(payload, socketMessageTypeRef)
 
-        return if (socketMessagePayload.system.isEmpty() && socketMessagePayload.gameStateResponse != null) {
+        return if (!socketMessagePayload.isSysMessage && socketMessagePayload.gameStateResponse != null) {
             gameMessageService.prepareResponseMessage(socketMessagePayload.gameStateResponse.gameState)
         } else {
-            systemMessageService.handleSystemMessage(socketMessagePayload.system)
+            systemMessageService.handleSystemMessage(socketMessagePayload.systemMessage)
         }
     }
 }

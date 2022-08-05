@@ -1,27 +1,46 @@
 package com.example.game.message
 
+import com.example.game.model.SocketMessagePayload
+import com.example.game.model.SystemMessage
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.stereotype.Service
 import org.springframework.web.socket.TextMessage
 
 @Service
-class SystemMessageService {
+class SystemMessageService(private val objectMapper: ObjectMapper) {
     private companion object {
-        const val NEW_GAME_PAYLOAD = """{
-            "system":"newGame"
-            }"""
-        const val ERROR_PAYLOAD = """{
-            "error":"unsupported function"
-            }"""
+        const val INVALID_INPUT_ERROR = "Invalid input"
+        const val MESSAGE_NULL_ERROR = "System message should not be null"
     }
 
-    fun handleSystemMessage(systemMessage: String): TextMessage {
-        return when (systemMessage) {
-            "name" -> {
-                TextMessage(NEW_GAME_PAYLOAD)
+    fun handleSystemMessage(systemMessage: SystemMessage?): TextMessage {
+        return if (systemMessage != null) {
+            when (systemMessage.key) {
+                "name" -> {
+                    val payload = createSuccessPayload()
+                    println(payload)
+                    val json = jacksonObjectMapper().writeValueAsString(payload)
+                    println(json)
+                    TextMessage(json)
+                }
+
+                else -> {
+                    TextMessage(objectMapper.writeValueAsString(createErrorPayload(INVALID_INPUT_ERROR)))
+                }
             }
-            else -> {
-                TextMessage(ERROR_PAYLOAD)
-            }
+        } else {
+            TextMessage(objectMapper.writeValueAsString(createErrorPayload(MESSAGE_NULL_ERROR)))
         }
+    }
+
+    private fun createSuccessPayload(): SocketMessagePayload {
+        val successSystemMessage = SystemMessage("success", null)
+        return SocketMessagePayload(isSysMessage = true, systemMessage = successSystemMessage)
+    }
+
+    private fun createErrorPayload(message: String): SocketMessagePayload {
+        val errorSystemMessage = SystemMessage("error", message)
+        return SocketMessagePayload(isSysMessage = true, systemMessage = errorSystemMessage)
     }
 }

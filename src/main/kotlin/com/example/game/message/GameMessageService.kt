@@ -30,6 +30,6 @@ class GameMessageService(
     }
 
     private fun createErrorPayload(): String {
-        return objectMapper.writeValueAsString(SocketMessagePayload(error = "Invalid input!"))
+        return objectMapper.writeValueAsString(SocketMessagePayload())
     }
 }

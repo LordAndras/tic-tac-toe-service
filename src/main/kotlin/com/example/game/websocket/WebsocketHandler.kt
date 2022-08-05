@@ -13,12 +13,15 @@ import org.springframework.web.socket.handler.TextWebSocketHandler
 class WebsocketHandler(
     private val messageHandlerFacade: MessageHandlerFacade
 ) : TextWebSocketHandler() {
+    private companion object {
+        val greetingMessage = TextMessage("""{"isSysMessage":true,"systemMessage":{"key":"greeting"}, "gameStateResponse": null}""")
+    }
     private val sessions = mutableMapOf<WebSocketSession, Player>()
 
     override fun afterConnectionEstablished(session: WebSocketSession) {
         val newPlayer = Player(null, session.id)
         sessions[session] = newPlayer
-        session.sendMessage(TextMessage("""{"system":"greeting"}"""))
+        session.sendMessage(greetingMessage)
         super.afterConnectionEstablished(session)
     }
 
