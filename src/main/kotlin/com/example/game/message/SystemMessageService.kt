@@ -22,7 +22,6 @@ class SystemMessageService(private val objectMapper: ObjectMapper) {
                     val json = jacksonObjectMapper().writeValueAsString(payload)
                     TextMessage(json)
                 }
-
                 else -> {
                     TextMessage(objectMapper.writeValueAsString(createErrorPayload(INVALID_INPUT_ERROR)))
                 }
