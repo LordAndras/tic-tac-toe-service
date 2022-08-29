@@ -97,4 +97,27 @@ internal class SystemMessageServiceTest {
         resultPayload.systemMessage!!.value shouldBe "Name should not be null"
     }
 
+    @Test
+    fun `handleSystemMessage should return list of players`() {
+        val testPlayer1 = Player("Bob", "testId")
+        val testPlayer2 = Player("Tom", "testId")
+
+        val testSystemMessage = SystemMessage("players", null)
+
+        every { mockSession.id } returns "testId"
+        val session2: WebSocketSession = mockk(relaxed = true) {
+            every { id } returns "sessionId"
+        }
+
+        sessionHandler.addSession(mockSession, testPlayer1)
+        sessionHandler.addSession(session2, testPlayer2,)
+
+
+        val result = systemMessageService.handleSystemMessage(mockSession, testSystemMessage)
+        val resultPayload = objectMapper.readValue(result.payload, socketMessageTypeRef)
+
+        resultPayload.isSysMessage shouldBe true
+        resultPayload.systemMessage!!.value shouldBe objectMapper.writeValueAsString(listOf(testPlayer1, testPlayer2))
+    }
+
 }

@@ -30,6 +30,10 @@ class SystemMessageService(private val objectMapper: ObjectMapper, private val s
                     val json = jacksonObjectMapper().writeValueAsString(payload)
                     TextMessage(json)
                 }
+                "players" -> {
+                    val json = objectMapper.writeValueAsString(createPlayersPayload())
+                    TextMessage(json)
+                }
 
                 else -> {
                     TextMessage(objectMapper.writeValueAsString(createErrorPayload(INVALID_INPUT_ERROR)))
@@ -48,5 +52,11 @@ class SystemMessageService(private val objectMapper: ObjectMapper, private val s
     private fun createErrorPayload(message: String): SocketMessagePayload {
         val errorSystemMessage = SystemMessage("error", message)
         return SocketMessagePayload(isSysMessage = true, systemMessage = errorSystemMessage)
+    }
+
+    private fun createPlayersPayload(): SocketMessagePayload {
+        val players = objectMapper.writeValueAsString(sessionHandler.getSessions().values)
+        val playerMessage = SystemMessage("success", players)
+        return SocketMessagePayload(isSysMessage = true, systemMessage = playerMessage)
     }
 }
