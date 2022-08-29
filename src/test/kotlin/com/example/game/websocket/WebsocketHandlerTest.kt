@@ -1,6 +1,7 @@
 package com.example.game.websocket
 
 import com.example.game.message.MessageHandlerFacade
+import com.example.game.session.SessionHandler
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
@@ -13,12 +14,14 @@ internal class WebsocketHandlerTest {
 
     private lateinit var websocketHandler: WebsocketHandler
     private lateinit var messageHandlerFacade: MessageHandlerFacade
+    private lateinit var mockSessionHandler: SessionHandler
     private lateinit var mockSession: WebSocketSession
 
     @BeforeEach
     fun setUp() {
         messageHandlerFacade = mockk(relaxed = true)
-        websocketHandler = WebsocketHandler(messageHandlerFacade)
+        mockSessionHandler = mockk(relaxed = true)
+        websocketHandler = WebsocketHandler(messageHandlerFacade, mockSessionHandler)
         mockSession = mockk(relaxed = true)
     }
 

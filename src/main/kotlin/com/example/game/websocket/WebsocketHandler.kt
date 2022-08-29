@@ -2,6 +2,7 @@ package com.example.game.websocket
 
 import com.example.game.message.MessageHandlerFacade
 import com.example.game.model.Player
+import com.example.game.session.SessionHandler
 import org.springframework.stereotype.Component
 import org.springframework.web.socket.CloseStatus
 import org.springframework.web.socket.TextMessage
@@ -11,16 +12,16 @@ import org.springframework.web.socket.handler.TextWebSocketHandler
 
 @Component
 class WebsocketHandler(
-    private val messageHandlerFacade: MessageHandlerFacade
+    private val messageHandlerFacade: MessageHandlerFacade,
+    private val sessionHandler: SessionHandler
 ) : TextWebSocketHandler() {
     private companion object {
         val greetingMessage = TextMessage("""{"isSysMessage":true,"systemMessage":{"key":"greeting"}, "gameStateResponse": null}""")
     }
-    private val sessions = mutableMapOf<WebSocketSession, Player>()
 
     override fun afterConnectionEstablished(session: WebSocketSession) {
         val newPlayer = Player(null, session.id)
-        sessions[session] = newPlayer
+        sessionHandler.addSession(session, newPlayer)
         session.sendMessage(greetingMessage)
         super.afterConnectionEstablished(session)
     }
@@ -30,14 +31,14 @@ class WebsocketHandler(
     }
 
     override fun afterConnectionClosed(session: WebSocketSession, status: CloseStatus) {
-        sessions.remove(session)
+        sessionHandler.removeSession(session)
         super.afterConnectionClosed(session, status)
     }
 
     override fun handleTextMessage(session: WebSocketSession, message: TextMessage) {
         val responseMessage = messageHandlerFacade.handleMessage(message.payload)
 
-        sessions.keys.forEach {
+        sessionHandler.getSessions().forEach {
             it.sendMessage(responseMessage)
         }
     }
