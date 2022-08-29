@@ -8,8 +8,8 @@ import org.springframework.web.socket.WebSocketSession
 class SessionHandler {
     private val sessions: MutableMap<WebSocketSession, Player> = mutableMapOf()
 
-    fun getSessions() : List<WebSocketSession> {
-        return this.sessions.keys.toList()
+    fun getSessions() : MutableMap<WebSocketSession, Player> {
+        return this.sessions
     }
 
     fun addSession(session: WebSocketSession, player: Player) {
@@ -18,5 +18,9 @@ class SessionHandler {
 
     fun removeSession(session: WebSocketSession) {
         this.sessions.remove(session)
+    }
+
+    fun setName(session: WebSocketSession, name: String) {
+        this.sessions[session]?.name = name
     }
 }

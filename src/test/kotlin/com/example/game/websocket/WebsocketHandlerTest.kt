@@ -31,7 +31,7 @@ internal class WebsocketHandlerTest {
 
         websocketHandler.handleMessage(mockSession, testTextMessage)
 
-        verify { messageHandlerFacade.handleMessage(testTextMessage.payload) }
+        verify { messageHandlerFacade.handleMessage(mockSession, testTextMessage.payload) }
     }
 
 }

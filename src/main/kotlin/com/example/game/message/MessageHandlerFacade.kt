@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.stereotype.Service
 import org.springframework.web.socket.TextMessage
+import org.springframework.web.socket.WebSocketSession
 
 @Service
 class MessageHandlerFacade(
@@ -14,13 +15,13 @@ class MessageHandlerFacade(
 ) {
     private val socketMessageTypeRef = object : TypeReference<SocketMessagePayload>() {}
 
-    fun handleMessage(payload: String): TextMessage {
+    fun handleMessage(session: WebSocketSession, payload: String): TextMessage {
         val socketMessagePayload = objectMapper.readValue(payload, socketMessageTypeRef)
 
         return if (!socketMessagePayload.isSysMessage && socketMessagePayload.gameStateResponse != null) {
             gameMessageService.prepareResponseMessage(socketMessagePayload.gameStateResponse.gameState)
         } else {
-            systemMessageService.handleSystemMessage(socketMessagePayload.systemMessage)
+            systemMessageService.handleSystemMessage(session, socketMessagePayload.systemMessage)
         }
     }
 }

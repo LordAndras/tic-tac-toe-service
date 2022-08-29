@@ -36,9 +36,9 @@ class WebsocketHandler(
     }
 
     override fun handleTextMessage(session: WebSocketSession, message: TextMessage) {
-        val responseMessage = messageHandlerFacade.handleMessage(message.payload)
+        val responseMessage = messageHandlerFacade.handleMessage(session, message.payload)
 
-        sessionHandler.getSessions().forEach {
+        sessionHandler.getSessions().keys.forEach {
             it.sendMessage(responseMessage)
         }
     }

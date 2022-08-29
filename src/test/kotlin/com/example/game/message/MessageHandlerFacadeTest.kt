@@ -10,17 +10,20 @@ import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 
 import org.junit.jupiter.api.Test
+import org.springframework.web.socket.WebSocketSession
 
 internal class MessageHandlerFacadeTest {
     private lateinit var messageHandlerFacade: MessageHandlerFacade
     private lateinit var mockGameMessageService: GameMessageService
     private lateinit var mockSystemMessageService: SystemMessageService
+    private lateinit var mockSession: WebSocketSession
     private lateinit var objectMapper: ObjectMapper
 
     @BeforeEach
     fun setUp() {
         mockGameMessageService = mockk(relaxed = true)
         mockSystemMessageService = mockk(relaxed = true)
+        mockSession = mockk(relaxed = true)
         objectMapper = ObjectMapper()
         objectMapper.registerKotlinModule()
         messageHandlerFacade = MessageHandlerFacade(mockGameMessageService, mockSystemMessageService, objectMapper)
@@ -32,9 +35,9 @@ internal class MessageHandlerFacadeTest {
 
         val testPayload = SocketMessagePayload(true, testSystemMessage)
 
-        messageHandlerFacade.handleMessage(objectMapper.writeValueAsString(testPayload))
+        messageHandlerFacade.handleMessage(mockSession, objectMapper.writeValueAsString(testPayload))
 
-        verify { mockSystemMessageService.handleSystemMessage(testSystemMessage) }
+        verify { mockSystemMessageService.handleSystemMessage(mockSession, testSystemMessage) }
     }
 
     @Test
@@ -43,8 +46,8 @@ internal class MessageHandlerFacadeTest {
 
         val testPayload = SocketMessagePayload(false, testSystemMessage, gameStateResponse = GameStateResponse())
 
-        messageHandlerFacade.handleMessage(objectMapper.writeValueAsString(testPayload))
+        messageHandlerFacade.handleMessage(mockSession, objectMapper.writeValueAsString(testPayload))
 
-        verify(exactly = 0) { mockSystemMessageService.handleSystemMessage(testSystemMessage) }
+        verify(exactly = 0) { mockSystemMessageService.handleSystemMessage(mockSession, testSystemMessage) }
     }
 }
