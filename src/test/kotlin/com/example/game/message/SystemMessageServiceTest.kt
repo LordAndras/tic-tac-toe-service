@@ -32,7 +32,7 @@ internal class SystemMessageServiceTest {
 
     @Test
     fun `handleSystemMessage should return success payload`() {
-        val testSystemMessage = SystemMessage("name", null)
+        val testSystemMessage = SystemMessage("name", "Bob")
 
         val result = systemMessageService.handleSystemMessage(mockSession, testSystemMessage)
         val resultPayload = objectMapper.readValue(result.payload, socketMessageTypeRef)
@@ -83,6 +83,18 @@ internal class SystemMessageServiceTest {
         systemMessageService.handleSystemMessage(mockSession, testMessage)
 
         sessionHandler.getSessions()[mockSession]!!.name shouldBe testName
+    }
+
+    @Test
+    fun `handleSystemMessage should send name is null error`() {
+        val testSystemMessage = SystemMessage("name", null)
+
+        val result = systemMessageService.handleSystemMessage(mockSession, testSystemMessage)
+        val resultPayload = objectMapper.readValue(result.payload, socketMessageTypeRef)
+
+        resultPayload.isSysMessage shouldBe true
+        resultPayload.systemMessage!!.key shouldBe "error"
+        resultPayload.systemMessage!!.value shouldBe "Name should not be null"
     }
 
 }

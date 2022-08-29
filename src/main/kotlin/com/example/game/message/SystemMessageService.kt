@@ -14,14 +14,19 @@ class SystemMessageService(private val objectMapper: ObjectMapper, private val s
     private companion object {
         const val INVALID_INPUT_ERROR = "Invalid input"
         const val MESSAGE_NULL_ERROR = "System message should not be null"
+        const val NAME_NULL_ERROR = "Name should not be null"
     }
 
     fun handleSystemMessage(session: WebSocketSession, systemMessage: SystemMessage?): TextMessage {
         return if (systemMessage != null) {
             when (systemMessage.key) {
                 "name" -> {
-                    systemMessage.value?.let { sessionHandler.setName(session, it) }
-                    val payload = createSuccessPayload()
+                    var payload = createSuccessPayload()
+                    if (systemMessage.value != null) {
+                        sessionHandler.setName(session, systemMessage.value)
+                    } else {
+                        payload = createErrorPayload(NAME_NULL_ERROR)
+                    }
                     val json = jacksonObjectMapper().writeValueAsString(payload)
                     TextMessage(json)
                 }
