@@ -1,8 +1,10 @@
 package com.example.game.message
 
+import com.example.game.model.GameStateResponse
 import com.example.game.model.Player
 import com.example.game.model.SocketMessagePayload
 import com.example.game.model.SystemMessage
+import com.example.game.service.NewGameService
 import com.example.game.session.SessionHandler
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -16,6 +18,7 @@ import org.springframework.web.socket.WebSocketSession
 
 internal class SystemMessageServiceTest {
     private lateinit var systemMessageService: SystemMessageService
+    private lateinit var mockNewGameService: NewGameService
     private lateinit var sessionHandler: SessionHandler
     private lateinit var mockSession: WebSocketSession
     private lateinit var objectMapper: ObjectMapper
@@ -25,8 +28,9 @@ internal class SystemMessageServiceTest {
     fun setUp() {
         objectMapper = ObjectMapper()
         sessionHandler = SessionHandler()
+        mockNewGameService = mockk(relaxed = true)
         mockSession = mockk(relaxed = true)
-        systemMessageService = SystemMessageService(objectMapper, sessionHandler)
+        systemMessageService = SystemMessageService(sessionHandler, mockNewGameService, objectMapper)
         objectMapper.registerKotlinModule()
     }
 
@@ -118,6 +122,19 @@ internal class SystemMessageServiceTest {
 
         resultPayload.isSysMessage shouldBe true
         resultPayload.systemMessage!!.value shouldBe objectMapper.writeValueAsString(listOf(testPlayer1, testPlayer2))
+    }
+
+    @Test
+    fun `handleSystemMessage should return a new game's empty state`() {
+        val testSystemMessage = SystemMessage("newGame", null)
+        val expectedResult = GameStateResponse("test state")
+
+        every { mockNewGameService.newGame() } returns expectedResult
+
+        val result = systemMessageService.handleSystemMessage(mockSession, testSystemMessage)
+        val resultPayload = objectMapper.readValue(result.payload, socketMessageTypeRef)
+
+        resultPayload.gameStateResponse shouldBe expectedResult
     }
 
 }

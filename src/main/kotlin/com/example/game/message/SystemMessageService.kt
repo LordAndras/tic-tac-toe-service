@@ -2,6 +2,7 @@ package com.example.game.message
 
 import com.example.game.model.SocketMessagePayload
 import com.example.game.model.SystemMessage
+import com.example.game.service.NewGameService
 import com.example.game.session.SessionHandler
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -10,7 +11,11 @@ import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
 
 @Service
-class SystemMessageService(private val objectMapper: ObjectMapper, private val sessionHandler: SessionHandler) {
+class SystemMessageService(
+    private val sessionHandler: SessionHandler,
+    private val newGameService: NewGameService,
+    private val objectMapper: ObjectMapper
+) {
     private companion object {
         const val INVALID_INPUT_ERROR = "Invalid input"
         const val MESSAGE_NULL_ERROR = "System message should not be null"
@@ -32,6 +37,10 @@ class SystemMessageService(private val objectMapper: ObjectMapper, private val s
                 }
                 "players" -> {
                     val json = objectMapper.writeValueAsString(createPlayersPayload())
+                    TextMessage(json)
+                }
+                "newGame" -> {
+                    val json = objectMapper.writeValueAsString(createNewGamePayload())
                     TextMessage(json)
                 }
 
@@ -58,5 +67,9 @@ class SystemMessageService(private val objectMapper: ObjectMapper, private val s
         val players = objectMapper.writeValueAsString(sessionHandler.getSessions().values)
         val playerMessage = SystemMessage("success", players)
         return SocketMessagePayload(isSysMessage = true, systemMessage = playerMessage)
+    }
+
+    private fun createNewGamePayload(): SocketMessagePayload {
+        return SocketMessagePayload(isSysMessage = true, gameStateResponse = newGameService.newGame())
     }
 }
