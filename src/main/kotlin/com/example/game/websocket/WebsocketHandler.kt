@@ -20,7 +20,7 @@ class WebsocketHandler(
     }
 
     override fun afterConnectionEstablished(session: WebSocketSession) {
-        val newPlayer = Player(null, session.id)
+        val newPlayer = Player(sessionId = session.id)
         sessionHandler.addSession(session, newPlayer)
         session.sendMessage(greetingMessage)
         super.afterConnectionEstablished(session)

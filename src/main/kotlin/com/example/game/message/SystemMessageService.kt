@@ -23,35 +23,48 @@ class SystemMessageService(
     }
 
     fun handleSystemMessage(session: WebSocketSession, systemMessage: SystemMessage?): TextMessage {
-        return if (systemMessage != null) {
-            when (systemMessage.key) {
-                "name" -> {
-                    var payload = createSuccessPayload()
-                    if (systemMessage.value != null) {
-                        sessionHandler.setName(session, systemMessage.value)
-                    } else {
-                        payload = createErrorPayload(NAME_NULL_ERROR)
+        return try {
+            if (systemMessage != null) {
+                when (systemMessage.key) {
+                    "name" -> {
+                        var payload = createSuccessPayload()
+                        if (systemMessage.value != null) {
+                            sessionHandler.setName(session, systemMessage.value)
+                        } else {
+                            payload = createErrorPayload(NAME_NULL_ERROR)
+                        }
+                        val json = jacksonObjectMapper().writeValueAsString(payload)
+                        TextMessage(json)
                     }
-                    val json = jacksonObjectMapper().writeValueAsString(payload)
-                    TextMessage(json)
-                }
-                "players" -> {
-                    val json = objectMapper.writeValueAsString(createPlayersPayload())
-                    TextMessage(json)
-                }
-                "newGame" -> {
-                    val json = objectMapper.writeValueAsString(createNewGamePayload())
-                    TextMessage(json)
-                }
 
-                else -> {
-                    TextMessage(objectMapper.writeValueAsString(createErrorPayload(INVALID_INPUT_ERROR)))
+                    "players" -> {
+                        val json = objectMapper.writeValueAsString(createPlayersPayload())
+                        TextMessage(json)
+                    }
+
+                    "invite" -> {
+                        sessionHandler.createGameSession(session, systemMessage)
+                        val json = objectMapper.writeValueAsString(createSuccessPayload())
+                        TextMessage(json)
+                    }
+
+                    "newGame" -> {
+                        val json = objectMapper.writeValueAsString(createNewGamePayload())
+                        TextMessage(json)
+                    }
+
+                    else -> {
+                        TextMessage(objectMapper.writeValueAsString(createErrorPayload(INVALID_INPUT_ERROR)))
+                    }
                 }
+            } else {
+                TextMessage(objectMapper.writeValueAsString(createErrorPayload(MESSAGE_NULL_ERROR)))
             }
-        } else {
-            TextMessage(objectMapper.writeValueAsString(createErrorPayload(MESSAGE_NULL_ERROR)))
+        } catch (exception: Exception) {
+            TextMessage(objectMapper.writeValueAsString(createErrorPayload(exception.message ?: "Error occurred")))
         }
     }
+
 
     private fun createSuccessPayload(): SocketMessagePayload {
         val successSystemMessage = SystemMessage("success", null)
