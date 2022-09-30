@@ -29,7 +29,7 @@ class SystemMessageService(
                     "name" -> {
                         var payload = createSuccessPayload()
                         if (systemMessage.value != null) {
-                            sessionHandler.setName(session, systemMessage.value)
+                            sessionHandler.setPlayerName(session, systemMessage.value)
                         } else {
                             payload = createErrorPayload(NAME_NULL_ERROR)
                         }

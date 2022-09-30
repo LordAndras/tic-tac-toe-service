@@ -15,24 +15,6 @@ class SessionHandler {
         return this.sessions
     }
 
-    fun getSessionFromId(sessionId: String): WebSocketSession {
-        val session = this.sessions.keys.find { it.id == sessionId }
-        if (session != null) {
-            return session
-        } else {
-            throw SessionNotFoundException()
-        }
-    }
-
-    fun getPlayerOfSession(session: WebSocketSession): Player {
-        val player = this.sessions[session]
-        if (player != null) {
-            return player
-        } else {
-            throw (PlayerNotFoundException())
-        }
-    }
-
     fun addSession(session: WebSocketSession, player: Player) {
         this.sessions[session] = player
     }
@@ -41,16 +23,39 @@ class SessionHandler {
         this.sessions.remove(session)
     }
 
-    fun setName(session: WebSocketSession, name: String) {
-        this.sessions[session]?.name = name
+    fun setPlayerName(session: WebSocketSession, name: String) {
+        val player = getPlayerOfSession(session)
+        player.name = name
     }
 
     fun createGameSession(session: WebSocketSession, systemMessage: SystemMessage) {
-        val playerOne = getPlayerOfSession(session)
-        val sessionTwo = getSessionFromId(systemMessage.value!!)
-        val playerTwo = getPlayerOfSession(sessionTwo)
-        playerOne.inGame = true
-        playerTwo.inGame = true
-        this.gameSessions.add(GameSession(playerOne, playerTwo))
+        val player = getPlayerOfSession(session)
+        val session2 = getSessionFromId(systemMessage.value!!)
+        val player2 = getPlayerOfSession(session2)
+        player.inGame = true
+        player2.inGame = true
+        this.gameSessions.add(GameSession(player, player2))
+    }
+
+    fun getCurrentGameNumber(): Int {
+        return this.gameSessions.size
+    }
+
+    private fun getSessionFromId(sessionId: String): WebSocketSession {
+        val session = this.sessions.keys.find { it.id == sessionId }
+        if (session != null) {
+            return session
+        } else {
+            throw SessionNotFoundException()
+        }
+    }
+
+    private fun getPlayerOfSession(session: WebSocketSession): Player {
+        val player = this.sessions[session]
+        if (player != null) {
+            return player
+        } else {
+            throw (PlayerNotFoundException())
+        }
     }
 }

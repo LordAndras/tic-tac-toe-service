@@ -17,6 +17,9 @@ import org.junit.jupiter.api.Test
 import org.springframework.web.socket.WebSocketSession
 
 internal class SystemMessageServiceTest {
+    private companion object {
+        const val SESSION_ID = "test id"
+    }
     private lateinit var systemMessageService: SystemMessageService
     private lateinit var mockNewGameService: NewGameService
     private lateinit var sessionHandler: SessionHandler
@@ -35,7 +38,9 @@ internal class SystemMessageServiceTest {
     }
 
     @Test
-    fun `handleSystemMessage should return success payload`() {
+    fun `handleSystemMessage should return success payload with name message`() {
+        val testPlayer = Player(sessionId = SESSION_ID)
+        sessionHandler.addSession(mockSession, testPlayer)
         val testSystemMessage = SystemMessage("name", "Bob")
 
         val result = systemMessageService.handleSystemMessage(mockSession, testSystemMessage)
