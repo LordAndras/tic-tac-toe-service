@@ -2,9 +2,11 @@ package com.example.game.session
 
 import com.example.game.model.Player
 import com.example.game.model.SystemMessage
+import com.example.game.sending.MessageSendingService
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -15,10 +17,12 @@ internal class SessionHandlerTest {
         const val TEST_SESSION_ID = "test Id"
         const val TEST_SESSION_ID_2 = "test Id 2"
         const val TEST_NAME = "Bob"
+        const val TEST_NAME_2 = "DAVE"
     }
 
     private lateinit var mockWebSocketSession: WebSocketSession
     private lateinit var mockWebSocketSession2: WebSocketSession
+    private lateinit var mockMessageSendingService: MessageSendingService
     private lateinit var sessionHandler: SessionHandler
     private lateinit var testSystemMessage: SystemMessage
 
@@ -28,10 +32,11 @@ internal class SessionHandlerTest {
         every { mockWebSocketSession.id } returns TEST_SESSION_ID
         mockWebSocketSession2 = mockk(relaxed = true)
         every { mockWebSocketSession2.id } returns TEST_SESSION_ID_2
+        mockMessageSendingService = mockk(relaxed = true)
 
-        sessionHandler = SessionHandler()
+        sessionHandler = SessionHandler(mockMessageSendingService)
 
-        testSystemMessage = SystemMessage("invite", TEST_SESSION_ID_2)
+        testSystemMessage = SystemMessage("invite", TEST_NAME_2)
     }
 
     @Test
@@ -55,8 +60,8 @@ internal class SessionHandlerTest {
 
     @Test
     fun `createGameSession should create the gameSession with the correct players`() {
-        val player = Player(inGame = false)
-        val player2 = Player(inGame = false)
+        val player = Player(name = TEST_NAME, sessionId = TEST_SESSION_ID, inGame = false)
+        val player2 = Player(name = TEST_NAME_2, sessionId = TEST_SESSION_ID_2, inGame = false)
 
         sessionHandler.addSession(mockWebSocketSession, player)
         sessionHandler.addSession(mockWebSocketSession2, player2)
@@ -68,6 +73,21 @@ internal class SessionHandlerTest {
         sessionHandler.getCurrentGameNumber() shouldBe 1
         player.inGame shouldBe true
         player2.inGame shouldBe true
+    }
+
+    @Test
+    fun `createGameSession should send a message to the invited player`() {
+        val player = Player(name = TEST_NAME, sessionId = TEST_SESSION_ID, inGame = false)
+        val player2 = Player(name = TEST_NAME_2, sessionId = TEST_SESSION_ID_2, inGame = false)
+
+        sessionHandler.addSession(mockWebSocketSession, player)
+        sessionHandler.addSession(mockWebSocketSession2, player2)
+
+        sessionHandler.getCurrentGameNumber() shouldBe 0
+
+        sessionHandler.createGameSession(mockWebSocketSession, testSystemMessage)
+
+       verify { mockMessageSendingService.sendMessage(mockWebSocketSession2, any()) }
     }
 
     @Test

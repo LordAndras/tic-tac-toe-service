@@ -30,7 +30,7 @@ internal class SystemMessageServiceTest {
     @BeforeEach
     fun setUp() {
         objectMapper = ObjectMapper()
-        sessionHandler = SessionHandler()
+        sessionHandler = SessionHandler(mockk(relaxed = true))
         mockNewGameService = mockk(relaxed = true)
         mockSession = mockk(relaxed = true)
         systemMessageService = SystemMessageService(sessionHandler, mockNewGameService, objectMapper)

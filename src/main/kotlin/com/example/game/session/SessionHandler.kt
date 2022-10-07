@@ -3,11 +3,13 @@ package com.example.game.session
 import com.example.game.model.GameSession
 import com.example.game.model.Player
 import com.example.game.model.SystemMessage
+import com.example.game.sending.MessageSendingService
 import org.springframework.stereotype.Component
+import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
 
 @Component
-class SessionHandler {
+class SessionHandler (private val messageSendingService: MessageSendingService) {
     private val sessions: MutableMap<WebSocketSession, Player> = mutableMapOf()
     private val gameSessions: MutableList<GameSession> = mutableListOf()
 
@@ -30,22 +32,22 @@ class SessionHandler {
 
     fun createGameSession(session: WebSocketSession, systemMessage: SystemMessage) {
         val player = getPlayerOfSession(session)
-        val session2 = getSessionFromId(systemMessage.value!!)
+        val session2 = getSessionFromPlayerName(systemMessage.value!!)
         val player2 = getPlayerOfSession(session2)
         player.inGame = true
         player2.inGame = true
         this.gameSessions.add(GameSession(player, player2))
+        messageSendingService.sendMessage(session2, TextMessage("$player invited you to a game!"))
     }
 
     fun getCurrentGameNumber(): Int {
         return this.gameSessions.size
     }
 
-    private fun getSessionFromId(sessionId: String): WebSocketSession {
-        val session = this.sessions.keys.find { it.id == sessionId }
-        if (session != null) {
-            return session
-        } else {
+    private fun getSessionFromPlayerName(name: String): WebSocketSession {
+        return try {
+            this.sessions.filter { entry -> entry.value.name == name }.keys.toList().first()
+        } catch (exception: Exception) {
             throw SessionNotFoundException()
         }
     }
