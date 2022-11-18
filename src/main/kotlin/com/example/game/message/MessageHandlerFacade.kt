@@ -22,7 +22,7 @@ class MessageHandlerFacade(
         return if (!socketMessagePayload.isSysMessage && socketMessagePayload.gameStateResponse != null) {
             gameMessageService.prepareResponseMessage(socketMessagePayload.gameStateResponse.gameState)
         } else if (socketMessagePayload.isSysMessage && socketMessagePayload.systemMessage != null) {
-            systemMessageService.handleMessage(session, socketMessagePayload.systemMessage)
+            systemMessageService.prepareResponseMessage(session, socketMessagePayload.systemMessage)
         } else {
             throw MessagePayloadIsNullException()
         }

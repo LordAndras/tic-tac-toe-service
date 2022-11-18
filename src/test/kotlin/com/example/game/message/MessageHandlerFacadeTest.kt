@@ -39,7 +39,7 @@ internal class MessageHandlerFacadeTest {
 
         messageHandlerFacade.handleMessage(mockSession, objectMapper.writeValueAsString(testPayload))
 
-        verify { mockSystemMessageService.handleMessage(mockSession, testSystemMessage) }
+        verify { mockSystemMessageService.prepareResponseMessage(mockSession, testSystemMessage) }
     }
 
     @Test
@@ -50,7 +50,7 @@ internal class MessageHandlerFacadeTest {
 
         messageHandlerFacade.handleMessage(mockSession, objectMapper.writeValueAsString(testPayload))
 
-        verify(exactly = 0) { mockSystemMessageService.handleMessage(mockSession, testSystemMessage) }
+        verify(exactly = 0) { mockSystemMessageService.prepareResponseMessage(mockSession, testSystemMessage) }
     }
 
     @Test

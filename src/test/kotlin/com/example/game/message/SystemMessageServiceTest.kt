@@ -1,17 +1,13 @@
 package com.example.game.message
 
+import com.example.game.message.system.InvalidInputException
+import com.example.game.message.system.SystemMessageHandlerProvider
 import com.example.game.message.system.SystemMessageService
-import com.example.game.message.system.handler.InviteHandler
-import com.example.game.message.system.handler.NameHandler
-import com.example.game.message.system.handler.NewGameHandler
-import com.example.game.message.system.handler.PlayersHandler
-import com.example.game.model.SocketMessagePayload
 import com.example.game.model.SystemMessage
-import com.example.game.session.SessionHandler
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.kotest.matchers.shouldBe
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
@@ -21,32 +17,19 @@ import org.springframework.web.socket.WebSocketSession
 internal class SystemMessageServiceTest {
 
     private lateinit var systemMessageService: SystemMessageService
-    private lateinit var mockNameHandler: NameHandler
-    private lateinit var mockNewGameHandler: NewGameHandler
-    private lateinit var mockInviteHandler: InviteHandler
-    private lateinit var mockPlayersHandler: PlayersHandler
-    private lateinit var mockSessionHandler: SessionHandler
+    private lateinit var mockSystemMessageHandlerProvider: SystemMessageHandlerProvider
     private lateinit var mockSession: WebSocketSession
     private lateinit var objectMapper: ObjectMapper
-    private val socketMessageTypeRef = object : TypeReference<SocketMessagePayload>() {}
 
     @BeforeEach
     fun setUp() {
         objectMapper = ObjectMapper()
         objectMapper.registerKotlinModule()
-
-        mockNameHandler = mockk(relaxed = true)
-        mockInviteHandler = mockk(relaxed = true)
-        mockPlayersHandler = mockk(relaxed = true)
-        mockNewGameHandler = mockk(relaxed = true)
-        mockSessionHandler = mockk(relaxed = true)
+        mockSystemMessageHandlerProvider = mockk(relaxed = true)
         mockSession = mockk(relaxed = true)
 
         systemMessageService = SystemMessageService(
-            mockNameHandler,
-            mockInviteHandler,
-            mockPlayersHandler,
-            mockNewGameHandler,
+            mockSystemMessageHandlerProvider,
             objectMapper
         )
     }
@@ -54,49 +37,21 @@ internal class SystemMessageServiceTest {
     @Test
     fun `handleMessage should return invalid input error`() {
         val testSystemMessage = SystemMessage("invalid", null)
+        val expectedPayload = """{"isSysMessage":true,"systemMessage":{"key":"error","value":"Invalid input!"},"gameStateResponse":null}"""
 
-        val result = systemMessageService.handleMessage(mockSession, testSystemMessage)
+        every { mockSystemMessageHandlerProvider.provide(testSystemMessage) }.throws(InvalidInputException())
 
-        val resultPayload = objectMapper.readValue(result.payload, socketMessageTypeRef)
+        val result = systemMessageService.prepareResponseMessage(mockSession, testSystemMessage)
 
-        resultPayload.isSysMessage shouldBe true
-        resultPayload.systemMessage!!.key shouldBe "error"
-        resultPayload.systemMessage!!.value shouldBe "Invalid input"
+        result.payload shouldBe expectedPayload
     }
 
     @Test
-    fun `handleMessage should call nameHandler with correct payload`() {
+    fun `handleMessage should call SystemMessageHandlerProvider with correct payload`() {
         val testSystemMessage = SystemMessage("name", "Bob")
 
-        systemMessageService.handleMessage(mockSession, testSystemMessage)
+        systemMessageService.prepareResponseMessage(mockSession, testSystemMessage)
 
-        verify { mockNameHandler.handle(mockSession, testSystemMessage) }
-    }
-
-    @Test
-    fun `handleMessage should call playersHandler with correct payload`() {
-        val testSystemMessage = SystemMessage("players", null)
-
-        systemMessageService.handleMessage(mockSession, testSystemMessage)
-
-        verify { mockPlayersHandler.handle(mockSession, testSystemMessage) }
-    }
-
-    @Test
-    fun `handleMessage should call inviteHandler with correct payload`() {
-        val testSystemMessage = SystemMessage("invite", "Bob")
-
-        systemMessageService.handleMessage(mockSession, testSystemMessage)
-
-        verify { mockInviteHandler.handle(mockSession, testSystemMessage) }
-    }
-
-    @Test
-    fun `handleMessage should call newGameHandler with correct payload`() {
-        val testSystemMessage = SystemMessage("newGame", null)
-
-        systemMessageService.handleMessage(mockSession, testSystemMessage)
-
-        verify { mockNewGameHandler.handle(mockSession, testSystemMessage) }
+        verify { mockSystemMessageHandlerProvider.provide(testSystemMessage) }
     }
 }

@@ -1,3 +1,3 @@
 package com.example.game.message
 
-class MessagePayloadIsNullException : Throwable()
+class MessagePayloadIsNullException(override val message: String? = "Message payload is null!") : Exception()
