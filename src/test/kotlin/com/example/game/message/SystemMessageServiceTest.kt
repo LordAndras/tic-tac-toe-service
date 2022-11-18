@@ -3,6 +3,7 @@ package com.example.game.message
 import com.example.game.message.system.SystemMessageService
 import com.example.game.message.system.handler.InviteHandler
 import com.example.game.message.system.handler.NameHandler
+import com.example.game.message.system.handler.PlayersHandler
 import com.example.game.model.GameStateResponse
 import com.example.game.model.SocketMessagePayload
 import com.example.game.model.SystemMessage
@@ -17,7 +18,6 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
 
 internal class SystemMessageServiceTest {
@@ -26,6 +26,7 @@ internal class SystemMessageServiceTest {
     private lateinit var mockNewGameService: NewGameService
     private lateinit var mockNameHandler: NameHandler
     private lateinit var mockInviteHandler: InviteHandler
+    private lateinit var mockPlayersHandler: PlayersHandler
     private lateinit var mockSessionHandler: SessionHandler
     private lateinit var mockSession: WebSocketSession
     private lateinit var objectMapper: ObjectMapper
@@ -37,6 +38,7 @@ internal class SystemMessageServiceTest {
         objectMapper.registerKotlinModule()
         mockSessionHandler = mockk(relaxed = true)
         mockNameHandler = mockk(relaxed = true)
+        mockPlayersHandler = mockk(relaxed = true)
         mockInviteHandler = mockk(relaxed = true)
         mockNewGameService = mockk(relaxed = true)
         mockSession = mockk(relaxed = true)
@@ -44,6 +46,7 @@ internal class SystemMessageServiceTest {
             mockSessionHandler,
             mockNameHandler,
             mockInviteHandler,
+            mockPlayersHandler,
             mockNewGameService,
             objectMapper,
         )
@@ -72,17 +75,12 @@ internal class SystemMessageServiceTest {
     }
 
     @Test
-    fun `handleMessage should return list of players`() {
+    fun `handleMessage should call playersHandler with correct payload`() {
         val testSystemMessage = SystemMessage("players", null)
-        val resultPayload = """{"isSysMessage":true,"systemMessage":{"key":"success","value":"[\"Bob\",\"Tom\"]"},"gameStateResponse":null}"""
-        val expectedResult = TextMessage(resultPayload)
 
-        val players = mutableSetOf("Bob", "Tom")
-        every { mockSessionHandler.getSessionsWithPlayers().values as MutableSet<*> }.returns(players)
+        systemMessageService.handleMessage(mockSession, testSystemMessage)
 
-        val result = systemMessageService.handleMessage(mockSession, testSystemMessage)
-
-        result shouldBe expectedResult
+        verify { mockPlayersHandler.handle(mockSession, testSystemMessage) }
     }
 
     @Test

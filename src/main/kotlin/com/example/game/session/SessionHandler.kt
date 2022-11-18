@@ -9,12 +9,22 @@ import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
 
 @Component
-class SessionHandler (private val messageSendingService: MessageSendingService) {
+class SessionHandler(private val messageSendingService: MessageSendingService) {
     private val sessions: MutableMap<WebSocketSession, Player> = mutableMapOf()
     private val gameSessions: MutableList<GameSession> = mutableListOf()
 
     fun getSessionsWithPlayers(): MutableMap<WebSocketSession, Player> {
         return this.sessions
+    }
+
+    fun getPlayers(): MutableList<String> {
+        val response = mutableListOf<String>()
+        this.sessions.values.map { player ->
+            player.name?.let { name ->
+                response.add(name)
+            }
+        }
+        return response
     }
 
     fun getSessions(): MutableSet<WebSocketSession> {

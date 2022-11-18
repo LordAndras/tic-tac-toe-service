@@ -2,6 +2,7 @@ package com.example.game.message.system
 
 import com.example.game.message.system.handler.InviteHandler
 import com.example.game.message.system.handler.NameHandler
+import com.example.game.message.system.handler.PlayersHandler
 import com.example.game.model.SocketMessagePayload
 import com.example.game.model.SystemMessage
 import com.example.game.service.NewGameService
@@ -16,6 +17,7 @@ class SystemMessageService(
     private val sessionHandler: SessionHandler,
     private val nameHandler: NameHandler,
     private val inviteHandler: InviteHandler,
+    private val playersHandler: PlayersHandler,
     private val newGameService: NewGameService,
     private val objectMapper: ObjectMapper
 ) {
@@ -31,8 +33,7 @@ class SystemMessageService(
                 }
 
                 "players" -> {
-                    val json = objectMapper.writeValueAsString(createPlayersPayload())
-                    TextMessage(json)
+                    playersHandler.handle(session, systemMessage)
                 }
 
                 "invite" -> {
@@ -58,10 +59,10 @@ class SystemMessageService(
         return SocketMessagePayload(isSysMessage = true, systemMessage = errorSystemMessage)
     }
 
-    private fun createPlayersPayload(): SocketMessagePayload {
+    private fun createPlayersPayload(): String {
         val players = objectMapper.writeValueAsString(sessionHandler.getSessionsWithPlayers().values)
         val playerMessage = SystemMessage("success", players)
-        return SocketMessagePayload(isSysMessage = true, systemMessage = playerMessage)
+        return objectMapper.writeValueAsString(SocketMessagePayload(isSysMessage = true, systemMessage = playerMessage))
     }
 
     private fun createNewGamePayload(): SocketMessagePayload {
