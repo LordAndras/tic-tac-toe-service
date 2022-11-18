@@ -12,13 +12,33 @@ import org.springframework.web.socket.WebSocketSession
 class InviteHandler(private val sessionHandler: SessionHandler, private val objectMapper: ObjectMapper) :
     SystemMessageHandler {
     override fun handle(session: WebSocketSession, systemMessage: SystemMessage): TextMessage {
-        sessionHandler.createGameSession(session, systemMessage)
-        val json = objectMapper.writeValueAsString(createSuccessPayload())
-        return TextMessage(json)
+        return try {
+            sessionHandler.createGameSession(session, systemMessage)
+            TextMessage(createSuccessPayload())
+        } catch (exception: Exception) {
+            TextMessage(createErrorPayload(exception.message ?: "Error occurred"))
+        }
     }
 
-    private fun createSuccessPayload(): SocketMessagePayload {
+    private fun createSuccessPayload(): String {
         val successSystemMessage = SystemMessage("success", null)
-        return SocketMessagePayload(isSysMessage = true, systemMessage = successSystemMessage)
+        return objectMapper.writeValueAsString(
+            SocketMessagePayload(
+                isSysMessage = true,
+                systemMessage = successSystemMessage,
+                null
+            )
+        )
+    }
+
+    private fun createErrorPayload(message: String): String {
+        val errorSystemMessage = SystemMessage("error", message)
+        return objectMapper.writeValueAsString(
+            SocketMessagePayload(
+                isSysMessage = true,
+                systemMessage = errorSystemMessage,
+                null
+            )
+        )
     }
 }

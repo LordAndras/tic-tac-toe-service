@@ -61,7 +61,7 @@ class SessionHandler (private val messageSendingService: MessageSendingService) 
         if (player != null) {
             return player
         } else {
-            throw (PlayerNotFoundException())
+            throw PlayerNotFoundException()
         }
     }
 }
