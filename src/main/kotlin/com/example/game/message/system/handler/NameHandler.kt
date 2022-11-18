@@ -1,5 +1,6 @@
-package com.example.game.message.system
+package com.example.game.message.system.handler
 
+import com.example.game.message.system.SystemMessageHandler
 import com.example.game.model.SocketMessagePayload
 import com.example.game.model.SystemMessage
 import com.example.game.session.SessionHandler

@@ -1,5 +1,6 @@
 package com.example.game.message.system
 
+import com.example.game.message.system.handler.NameHandler
 import com.example.game.model.SystemMessage
 import com.example.game.session.SessionHandler
 import com.fasterxml.jackson.databind.ObjectMapper

@@ -1,5 +1,7 @@
 package com.example.game.message.system
 
+import com.example.game.message.system.handler.InviteHandler
+import com.example.game.message.system.handler.NameHandler
 import com.example.game.model.SocketMessagePayload
 import com.example.game.model.SystemMessage
 import com.example.game.service.NewGameService
