@@ -87,7 +87,9 @@ internal class SessionHandlerTest {
 
         sessionHandler.createGameSession(mockWebSocketSession, testSystemMessage)
 
-       verify { mockMessageSendingService.sendMessage(mockWebSocketSession2, any()) }
+        sessionHandler.getCurrentGameNumber() shouldBe 1
+
+       verify { mockMessageSendingService.sendInvite(mockWebSocketSession2, player) }
     }
 
     @Test

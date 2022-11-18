@@ -5,7 +5,6 @@ import com.example.game.model.Player
 import com.example.game.model.SystemMessage
 import com.example.game.sending.MessageSendingService
 import org.springframework.stereotype.Component
-import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
 
 @Component
@@ -51,7 +50,7 @@ class SessionHandler(private val messageSendingService: MessageSendingService) {
         player.inGame = true
         player2.inGame = true
         this.gameSessions.add(GameSession(player, player2))
-        messageSendingService.sendMessage(session2, TextMessage("$player invited you to a game!"))
+        messageSendingService.sendInvite(session2, player)
     }
 
     fun getCurrentGameNumber(): Int {
