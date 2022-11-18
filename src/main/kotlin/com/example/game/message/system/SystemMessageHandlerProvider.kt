@@ -21,7 +21,7 @@ class SystemMessageHandlerProvider(private val sessionHandler: SessionHandler, p
        return when (systemMessage.key) {
             "name" -> {
                 if (nameHandler == null) {
-                    this.nameHandler = NameHandler(sessionHandler, objectMapper)
+                    this.nameHandler = NameHandler(sessionHandler)
                     this.nameHandler!!
                 } else {
                     this.nameHandler!!
@@ -39,7 +39,7 @@ class SystemMessageHandlerProvider(private val sessionHandler: SessionHandler, p
 
             "invite" -> {
                 if (inviteHandler == null) {
-                    this.inviteHandler = InviteHandler(sessionHandler, objectMapper)
+                    this.inviteHandler = InviteHandler(sessionHandler)
                     this.inviteHandler!!
                 } else {
                     this.inviteHandler!!

@@ -76,15 +76,13 @@ internal class GameMessageServiceTest {
     @Test
     fun `prepareResponseMessage should return error message as payload string if input is invalid`() {
         val testInput = "0,1,1,0,-1,0,-1,1,1"
-        val testGameStateResponse = GameStateResponse("0,0,0,0,0,0,0,0,0", 1, true)
+        val expectedPayload = """{"isSysMessage":true,"systemMessage":{"key":"error","value":"Invalid input!"},"gameStateResponse":null}"""
 
         every { mockValidateStepService.validate(testInput) } returns false
-        every { mockProcessNextStepService.nextStep(testInput) } returns testGameStateResponse
-        every { mockObjectMapper.writeValueAsString(any()) } returns "Invalid input!"
 
        val result = gameMessageService.prepareResponseMessage(testInput)
 
-        result.payload shouldBe "Invalid input!"
+        result.payload shouldBe expectedPayload
     }
 
 }

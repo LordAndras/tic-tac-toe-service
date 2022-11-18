@@ -3,8 +3,6 @@ package com.example.game.message.system
 import com.example.game.message.system.handler.NameHandler
 import com.example.game.model.SystemMessage
 import com.example.game.session.SessionHandler
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.kotest.matchers.shouldBe
 import io.mockk.mockk
 import io.mockk.verify
@@ -18,17 +16,13 @@ internal class NameHandlerTest {
     private lateinit var nameHandler: NameHandler
     private lateinit var mockSession: WebSocketSession
     private lateinit var mockSessionHandler: SessionHandler
-    private lateinit var objectMapper: ObjectMapper
 
     @BeforeEach
     fun setUp() {
         mockSession = mockk(relaxed = true)
         mockSessionHandler = mockk(relaxed = true)
 
-        objectMapper = ObjectMapper()
-        objectMapper.registerKotlinModule()
-
-        nameHandler = NameHandler(mockSessionHandler, objectMapper)
+        nameHandler = NameHandler(mockSessionHandler)
     }
 
     @Test

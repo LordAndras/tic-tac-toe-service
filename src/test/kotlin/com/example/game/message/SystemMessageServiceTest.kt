@@ -4,8 +4,6 @@ import com.example.game.message.system.InvalidInputException
 import com.example.game.message.system.SystemMessageHandlerProvider
 import com.example.game.message.system.SystemMessageService
 import com.example.game.model.SystemMessage
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
@@ -15,22 +13,17 @@ import org.junit.jupiter.api.Test
 import org.springframework.web.socket.WebSocketSession
 
 internal class SystemMessageServiceTest {
-
     private lateinit var systemMessageService: SystemMessageService
     private lateinit var mockSystemMessageHandlerProvider: SystemMessageHandlerProvider
     private lateinit var mockSession: WebSocketSession
-    private lateinit var objectMapper: ObjectMapper
 
     @BeforeEach
     fun setUp() {
-        objectMapper = ObjectMapper()
-        objectMapper.registerKotlinModule()
         mockSystemMessageHandlerProvider = mockk(relaxed = true)
         mockSession = mockk(relaxed = true)
 
         systemMessageService = SystemMessageService(
-            mockSystemMessageHandlerProvider,
-            objectMapper
+            mockSystemMessageHandlerProvider
         )
     }
 

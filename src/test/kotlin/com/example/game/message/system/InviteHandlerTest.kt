@@ -5,8 +5,6 @@ import com.example.game.model.SystemMessage
 import com.example.game.session.PlayerNotFoundException
 import com.example.game.session.SessionHandler
 import com.example.game.session.SessionNotFoundException
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
@@ -21,17 +19,13 @@ internal class InviteHandlerTest {
     private lateinit var inviteHandler: InviteHandler
     private lateinit var mockSession: WebSocketSession
     private lateinit var mockSessionHandler: SessionHandler
-    private lateinit var objectMapper: ObjectMapper
 
     @BeforeEach
     fun setUp() {
         mockSession = mockk(relaxed = true)
         mockSessionHandler = mockk(relaxed = true)
 
-        objectMapper = ObjectMapper()
-        objectMapper.registerKotlinModule()
-
-        inviteHandler = InviteHandler(mockSessionHandler, objectMapper)
+        inviteHandler = InviteHandler(mockSessionHandler)
     }
 
     @Test

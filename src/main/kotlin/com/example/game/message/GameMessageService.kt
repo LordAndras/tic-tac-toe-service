@@ -21,15 +21,11 @@ class GameMessageService(
             val gameStateResponse = processNextStepService.nextStep(incomingPayload)
             TextMessage(createGameStatusPayload(gameStateResponse))
         } else {
-            TextMessage(createErrorPayload())
+            TextMessage(MessageUtils.createErrorPayload("Invalid input!"))
         }
     }
 
     private fun createGameStatusPayload(gameStateResponse: GameStateResponse): String {
         return objectMapper.writeValueAsString(SocketMessagePayload(gameStateResponse = gameStateResponse))
-    }
-
-    private fun createErrorPayload(): String {
-        return objectMapper.writeValueAsString(SocketMessagePayload())
     }
 }
