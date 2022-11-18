@@ -49,8 +49,6 @@ class WebsocketHandler(
             TextMessage("Error: ${exception.message}")
         }
 
-        sessionHandler.getSessionsWithPlayers().keys.forEach {
-            it.sendMessage(responseMessage)
-        }
+        session.sendMessage(responseMessage)
     }
 }
