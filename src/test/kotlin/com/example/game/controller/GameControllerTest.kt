@@ -35,7 +35,7 @@ internal class GameControllerTest {
         val testString = "1,1,0,0,-1,0,1,0,1"
         gameController.nextStep(testString)
 
-        verify { mockProcessNextStepService.processNextStep(testString) }
+        verify { mockProcessNextStepService.nextStep(testString) }
     }
 
     @Test
@@ -43,6 +43,6 @@ internal class GameControllerTest {
         val testString = "test"
         gameController.nextStep(testString)
 
-        verify(exactly = 0) { mockProcessNextStepService.processNextStep(testString) }
+        verify(exactly = 0) { mockProcessNextStepService.nextStep(testString) }
     }
 }

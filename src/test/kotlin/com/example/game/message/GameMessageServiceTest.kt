@@ -44,7 +44,7 @@ internal class GameMessageServiceTest {
 
         gameMessageService.prepareResponseMessage(testInput)
 
-        verify { mockProcessNextStepService.processNextStep(testInput) }
+        verify { mockProcessNextStepService.nextStep(testInput) }
     }
 
     @Test
@@ -55,7 +55,7 @@ internal class GameMessageServiceTest {
 
         gameMessageService.prepareResponseMessage(testInput)
 
-        verify(exactly = 0) { mockProcessNextStepService.processNextStep(testInput) }
+        verify(exactly = 0) { mockProcessNextStepService.nextStep(testInput) }
     }
 
     @Test
@@ -65,7 +65,7 @@ internal class GameMessageServiceTest {
         val expectation = SocketMessagePayload(gameStateResponse = testGameStateResponse)
 
         every { mockValidateStepService.validate(testInput) } returns true
-        every { mockProcessNextStepService.processNextStep(testInput) } returns testGameStateResponse
+        every { mockProcessNextStepService.nextStep(testInput) } returns testGameStateResponse
         every { mockObjectMapper.writeValueAsString(expectation) } returns "success"
 
        val result = gameMessageService.prepareResponseMessage(testInput)
@@ -79,7 +79,7 @@ internal class GameMessageServiceTest {
         val testGameStateResponse = GameStateResponse("0,0,0,0,0,0,0,0,0", 1, true)
 
         every { mockValidateStepService.validate(testInput) } returns false
-        every { mockProcessNextStepService.processNextStep(testInput) } returns testGameStateResponse
+        every { mockProcessNextStepService.nextStep(testInput) } returns testGameStateResponse
         every { mockObjectMapper.writeValueAsString(any()) } returns "Invalid input!"
 
        val result = gameMessageService.prepareResponseMessage(testInput)

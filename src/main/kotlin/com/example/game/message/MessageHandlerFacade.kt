@@ -1,5 +1,6 @@
 package com.example.game.message
 
+import com.example.game.message.system.SystemMessageService
 import com.example.game.model.SocketMessagePayload
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -20,8 +21,10 @@ class MessageHandlerFacade(
 
         return if (!socketMessagePayload.isSysMessage && socketMessagePayload.gameStateResponse != null) {
             gameMessageService.prepareResponseMessage(socketMessagePayload.gameStateResponse.gameState)
+        } else if (socketMessagePayload.isSysMessage && socketMessagePayload.systemMessage != null) {
+            systemMessageService.handleMessage(session, socketMessagePayload.systemMessage)
         } else {
-            systemMessageService.handleSystemMessage(session, socketMessagePayload.systemMessage)
+            throw MessagePayloadIsNullException()
         }
     }
 }

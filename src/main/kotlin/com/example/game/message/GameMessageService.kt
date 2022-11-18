@@ -18,7 +18,7 @@ class GameMessageService(
     fun prepareResponseMessage(incomingPayload: String): TextMessage {
         val isValidInput = validateStepService.validate(incomingPayload)
         return if (isValidInput) {
-            val gameStateResponse = processNextStepService.processNextStep(incomingPayload)
+            val gameStateResponse = processNextStepService.nextStep(incomingPayload)
             TextMessage(createGameStatusPayload(gameStateResponse))
         } else {
             TextMessage(createErrorPayload())

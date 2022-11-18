@@ -13,8 +13,12 @@ class SessionHandler (private val messageSendingService: MessageSendingService) 
     private val sessions: MutableMap<WebSocketSession, Player> = mutableMapOf()
     private val gameSessions: MutableList<GameSession> = mutableListOf()
 
-    fun getSessions(): MutableMap<WebSocketSession, Player> {
+    fun getSessionsWithPlayers(): MutableMap<WebSocketSession, Player> {
         return this.sessions
+    }
+
+    fun getSessions(): MutableSet<WebSocketSession> {
+        return this.sessions.keys
     }
 
     fun addSession(session: WebSocketSession, player: Player) {

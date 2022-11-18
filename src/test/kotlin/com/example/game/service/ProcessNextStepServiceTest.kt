@@ -15,7 +15,7 @@ internal class ProcessNextStepServiceTest {
         val processNextStepService = ProcessNextStepService(mockGameState, mockGameLogic)
         val testString = "test"
 
-        processNextStepService.processNextStep(testString)
+        processNextStepService.nextStep(testString)
 
         verify { mockGameState.setGameStatus(testString) }
     }
@@ -27,7 +27,7 @@ internal class ProcessNextStepServiceTest {
         val processNextStepService = ProcessNextStepService(mockGameState, mockGameLogic)
         val testString = "test"
 
-        processNextStepService.processNextStep(testString)
+        processNextStepService.nextStep(testString)
 
         verify { mockGameLogic.getGameStateResponse() }
     }

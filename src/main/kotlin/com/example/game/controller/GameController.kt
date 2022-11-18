@@ -31,7 +31,7 @@ class GameController(
         @RequestBody nextStep: String
     ): ResponseEntity<GameStateResponse> {
         return if (validateStepService.validate(nextStep)) {
-            ResponseEntity.ok(processNextStepService.processNextStep(nextStep))
+            ResponseEntity.ok(processNextStepService.nextStep(nextStep))
         } else {
             ResponseEntity.badRequest().build()
         }

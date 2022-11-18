@@ -1,6 +1,7 @@
 package com.example.game.websocket
 
 import com.example.game.message.MessageHandlerFacade
+import com.example.game.sending.MessageSendingService
 import com.example.game.session.SessionHandler
 import io.mockk.mockk
 import io.mockk.verify
@@ -15,13 +16,15 @@ internal class WebsocketHandlerTest {
     private lateinit var websocketHandler: WebsocketHandler
     private lateinit var messageHandlerFacade: MessageHandlerFacade
     private lateinit var mockSessionHandler: SessionHandler
+    private lateinit var mockMessageSendingService: MessageSendingService
     private lateinit var mockSession: WebSocketSession
 
     @BeforeEach
     fun setUp() {
         messageHandlerFacade = mockk(relaxed = true)
         mockSessionHandler = mockk(relaxed = true)
-        websocketHandler = WebsocketHandler(messageHandlerFacade, mockSessionHandler)
+        mockMessageSendingService = mockk(relaxed = true)
+        websocketHandler = WebsocketHandler(messageHandlerFacade, mockSessionHandler, mockMessageSendingService)
         mockSession = mockk(relaxed = true)
     }
 
