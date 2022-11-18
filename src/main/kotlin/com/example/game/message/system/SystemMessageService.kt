@@ -2,11 +2,10 @@ package com.example.game.message.system
 
 import com.example.game.message.system.handler.InviteHandler
 import com.example.game.message.system.handler.NameHandler
+import com.example.game.message.system.handler.NewGameHandler
 import com.example.game.message.system.handler.PlayersHandler
 import com.example.game.model.SocketMessagePayload
 import com.example.game.model.SystemMessage
-import com.example.game.service.NewGameService
-import com.example.game.session.SessionHandler
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.stereotype.Service
 import org.springframework.web.socket.TextMessage
@@ -14,11 +13,10 @@ import org.springframework.web.socket.WebSocketSession
 
 @Service
 class SystemMessageService(
-    private val sessionHandler: SessionHandler,
     private val nameHandler: NameHandler,
     private val inviteHandler: InviteHandler,
     private val playersHandler: PlayersHandler,
-    private val newGameService: NewGameService,
+    private val newGameHandler: NewGameHandler,
     private val objectMapper: ObjectMapper
 ) {
     private companion object {
@@ -41,8 +39,7 @@ class SystemMessageService(
                 }
 
                 "newGame" -> {
-                    val json = objectMapper.writeValueAsString(createNewGamePayload())
-                    TextMessage(json)
+                    newGameHandler.handle(session, systemMessage)
                 }
 
                 else -> {
@@ -57,15 +54,5 @@ class SystemMessageService(
     private fun createErrorPayload(message: String): SocketMessagePayload {
         val errorSystemMessage = SystemMessage("error", message)
         return SocketMessagePayload(isSysMessage = true, systemMessage = errorSystemMessage)
-    }
-
-    private fun createPlayersPayload(): String {
-        val players = objectMapper.writeValueAsString(sessionHandler.getSessionsWithPlayers().values)
-        val playerMessage = SystemMessage("success", players)
-        return objectMapper.writeValueAsString(SocketMessagePayload(isSysMessage = true, systemMessage = playerMessage))
-    }
-
-    private fun createNewGamePayload(): SocketMessagePayload {
-        return SocketMessagePayload(isSysMessage = true, gameStateResponse = newGameService.newGame())
     }
 }

@@ -9,6 +9,6 @@ class NewGameService(private var gameState: GameState) {
 
     fun newGame(): GameStateResponse {
         gameState.resetStatus()
-        return GameStateResponse(gameState.getGameStatusString(), 0, gameState.isGameEnd())
+        return GameStateResponse(gameState.getGameStatusString(), 0, false)
     }
 }
